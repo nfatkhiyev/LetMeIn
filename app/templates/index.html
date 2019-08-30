@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSH: Let me in!!!!</title>
+    <style>
+        body {text-align: center;
+            background-color: #152d54;
+            position: absolute;
+            margin: auto;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }  div {
+            display: inline-block;
+            margin-top: 10%;
+        }
+        p {
+            font-size: 40px;
+        }
+        #lmi {
+            display: none;
+        }
+
+        #butt {
+            background-color: #635192;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function letIn() {
+            var img = document.getElementById("lmi");
+            img.style.display = "block";
+            var butt = document.getElementById("butt");
+            butt.style.display = "none";
+        }
+    </script>
+</head>
+<body>
+<div>
+    <img id="lmi" src="https://media0.giphy.com/media/yx400dIdkwWdsCgWYp/giphy.gif"/>
+    <p></p>
+    <p></p>
+    <button id="butt" type="mrbutton" onclick="letIn()">Let me in!</button>
+</div>
+</body>
+</html>
+
