@@ -4,28 +4,36 @@
     <title>CSH: Let me in!!!!</title>
     <style>
       body {
-        text-align: center;
         background-color: #152d54;
+        display: flex;
         position: absolute;
-        margin: auto;
-        top: 0;
         left: 0;
         right: 0;
+        top: 0;
         bottom: 0;
       }
-      div {
-        display: inline-block;
-        margin-top: 10%;
-      }
+
       p {
-        font-size: 40px;
+        font-size: 4rem;
+        color: white;
       }
-      #lmi {
+
+      #waitingStatus,
+      #comingStatus,
+      #timedOutStatus,
+      #buttonContainer {
+        margin: auto;
+      }
+
+      #waitingStatus,
+      #comingStatus,
+      #timedOutStatus {
         display: none;
       }
 
-      #li {
-        display:none;
+      img {
+        display: block;
+        width: 100%;
       }
 
       button {
@@ -35,10 +43,11 @@
         padding: 15px 32px;
         text-align: center;
         text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 2px;
+        display: block;
+        font-size: 5rem;
+        margin: 5rem 0;
         cursor: pointer;
+        width: 100%;
       }
     </style>
     <script>
@@ -52,7 +61,7 @@
         hideElem("buttonContainer");
       }
       function letIn(level) {
-        showElem("lmi");
+        showElem("waitingStatus");
         hideButtons();
         var request = new XMLHttpRequest();
         request.open("GET","/activate?level="+level,true);
@@ -60,25 +69,41 @@
           if (request.readyState !== 4) {
             return;
           }
-          hideElem("lmi");
-          showElem("li");
+          hideElem("waitingStatus");
+          if (request.responseText == "timeout") {
+            showElem("timedOutStatus");
+          } else if (request.responseText == "buttonpressed") {
+            showElem("comingStatus");
+          }
         };
         request.send();
       }
     </script>
   </head>
   <body>
-    <div>
-      <img id="lmi" src="https://media0.giphy.com/media/yx400dIdkwWdsCgWYp/giphy.gif"/>
-      <img id="li" src="https://media0.giphy.com/media/Sti3xU9WslS95nIoox/giphy.gif" />
-      <p></p>
-      <p></p>
-      <div id="buttonContainer">
-        <button id="butt" onclick="letIn('1Level')">Let me in: Level 1!!!</button>
-        <br>
-        <br>
-        <button id="levelA" onclick="letIn('aLevel')">Let me in: Level A!!!</button>
-      </div>
+    <div id="waitingStatus">
+      <p>
+        Notifying User Center...
+      </p>
+      <img src="https://media0.giphy.com/media/yx400dIdkwWdsCgWYp/giphy.gif"/>
+    </div>
+    <div id="comingStatus">
+      <p>
+        Someone is coming to let you in!
+      </p>
+      <img src="https://media0.giphy.com/media/Sti3xU9WslS95nIoox/giphy.gif" />
+    </div>
+    <div id="timedOutStatus">
+      <p>
+        Nobody responded to the request.<br />
+        <br />
+        Thank you, or, I'm sorry.
+      </p>
+      <img src="https://media0.giphy.com/media/3oEjI80DSa1grNPTDq/giphy.gif" />
+    </div>
+    <div id="buttonContainer">
+      <button id="butt" onclick="letIn('1Level')">Let me in: Level 1!!!</button>
+      <button id="levelA" onclick="letIn('aLevel')">Let me in: Level A!!!</button>
     </div>
   </body>
 </html>

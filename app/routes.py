@@ -11,6 +11,7 @@ RESPONSE_BUTTON = 19
 LED_A_LEVEL = 27
 LED_1_LEVEL = 22
 
+
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(PENCIL_SHARPENER, GPIO.OUT)
@@ -18,7 +19,13 @@ GPIO.setup(RESPONSE_BUTTON, GPIO.IN,  pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(LED_A_LEVEL, GPIO.OUT)
 GPIO.setup(LED_1_LEVEL, GPIO.OUT)
 
-GPIO.output(17, GPIO.LOW)
+GPIO.output(PENCIL_SHARPENER, GPIO.LOW)
+GPIO.output(LED_A_LEVEL, GPIO.LOW)
+GPIO.output(LED_1_LEVEL, GPIO.LOW)
+
+#GPIO.output(PENCIL_SHARPENER, GPIO.HIGH)
+#GPIO.output(LED_A_LEVEL, GPIO.HIGH)
+#GPIO.output(LED_1_LEVEL, GPIO.HIGH)
 
 @app.route('/')
 def index():
@@ -41,14 +48,22 @@ def activate():
     while True:
 
         elapsedTime = time.time() - startTime
-        if GPIO.input(RESPONSE_BUTTON) == True or elapsedTime > ( 2 * 1 ):
-            print("Button pressed", file=sys.stderr)
+        timedOut = elapsedTime > ( 2 * 1 )
+        buttonPressed = GPIO.input(RESPONSE_BUTTON)
+
+        if timedOut or buttonPressed:
 
             GPIO.output(PENCIL_SHARPENER, GPIO.LOW)
             GPIO.output(LED_1_LEVEL, GPIO.LOW)
             GPIO.output(LED_A_LEVEL, GPIO.LOW)
 
-            return "success"
+            if timedOut:
+                print("Button timed out", file=sys.stderr)
+                return "timeout"
+            elif buttonPressed:
+                print("Button pressed", file=sys.stderr)
+                return "buttonpressed"
+            return ""
 
 def shutdown():
     print("Goodbye", file=sys.stderr)
