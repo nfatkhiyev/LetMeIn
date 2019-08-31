@@ -48,7 +48,7 @@ def activate():
     while True:
 
         elapsedTime = time.time() - startTime
-        timedOut = elapsedTime > ( 2 * 1 )
+        timedOut = elapsedTime > 45
         buttonPressed = GPIO.input(RESPONSE_BUTTON)
 
         if timedOut or buttonPressed:
