@@ -28,7 +28,7 @@
         display:none;
       }
 
-      #butt {
+      button {
         background-color: #635192;
         border: none;
         color: white;
@@ -42,20 +42,26 @@
       }
     </style>
     <script>
-      function letIn() {
-        var waitingImage = document.getElementById("lmi");
-        waitingImage.style.display = "block";
-        var butt = document.getElementById("butt");
-        butt.style.display = "none";
+      function showElem(id) {
+        document.getElementById(id).style.display = "initial";
+      }
+      function hideElem(id) {
+        document.getElementById(id).style.display = "none";
+      }
+      function hideButtons() {
+        hideElem("buttonContainer");
+      }
+      function letIn(level) {
+        showElem("lmi");
+        hideButtons();
         var request = new XMLHttpRequest();
-        request.open("GET","/activate",true);
+        request.open("GET","/activate?level="+level,true);
         request.onreadystatechange = function () {
           if (request.readyState !== 4) {
             return;
           }
-          var letInImage = document.getElementById("li");
-          letInImage.style.display = "block";
-          waitingImage.style.display = "none";
+          hideElem("lmi");
+          showElem("li");
         };
         request.send();
       }
@@ -67,7 +73,12 @@
       <img id="li" src="https://media0.giphy.com/media/Sti3xU9WslS95nIoox/giphy.gif" />
       <p></p>
       <p></p>
-      <button id="butt" type="mrbutton" onclick="letIn()">Let me in!</button>
+      <div id="buttonContainer">
+        <button id="butt" onclick="letIn('1Level')">Let me in: Level 1!!!</button>
+        <br>
+        <br>
+        <button id="levelA" onclick="letIn('aLevel')">Let me in: Level A!!!</button>
+      </div>
     </div>
   </body>
 </html>
