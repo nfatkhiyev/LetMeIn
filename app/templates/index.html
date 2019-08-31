@@ -3,63 +3,62 @@
   <head>
     <title>CSH: Let me in!!!!</title>
     <style>
-body {text-align: center;
-  background-color: #152d54;
-  position: absolute;
-  margin: auto;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}  div {
-  display: inline-block;
-  margin-top: 10%;
-}
-        p {
-          font-size: 40px;
-        }
-        #lmi {
-          display: none;
-        }
+      body {
+        text-align: center;
+        background-color: #152d54;
+        position: absolute;
+        margin: auto;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+      div {
+        display: inline-block;
+        margin-top: 10%;
+      }
+      p {
+        font-size: 40px;
+      }
+      #lmi {
+        display: none;
+      }
 
-        #li {
-          display:none;
-        }
+      #li {
+        display:none;
+      }
 
-        #butt {
-          background-color: #635192;
-          border: none;
-          color: white;
-          padding: 15px 32px;
-          text-align: center;
-          text-decoration: none;
-          display: inline-block;
-          font-size: 16px;
-          margin: 4px 2px;
-          cursor: pointer;
-        }
+      #butt {
+        background-color: #635192;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
     </style>
     <script>
-
-  function hasButtonBeenPressed() {
-    if({{boolean}}=true) {
-      var li = document.getElementById("li");
-      img.style.display = "block";
-      var but = document.getElementById("butt");
-      butt.style.display = "none";
-    }
-  }
-  function letIn() {
-    var img = document.getElementById("lmi");
-    img.style.display = "block";
-    var butt = document.getElementById("butt");
-    butt.style.display = "none";
-    var request = new XMLHttpRequest();
-    request.open("GET","/activate",true);
-    request.send();
-    request.open("GET","/buttonLoop",true);
-    request.send();
-  }
+      function letIn() {
+        var waitingImage = document.getElementById("lmi");
+        waitingImage.style.display = "block";
+        var butt = document.getElementById("butt");
+        butt.style.display = "none";
+        var request = new XMLHttpRequest();
+        request.open("GET","/activate",true);
+        request.onreadystatechange = function () {
+          if (request.readyState !== 4) {
+            return;
+          }
+          var letInImage = document.getElementById("li");
+          letInImage.style.display = "block";
+          waitingImage.style.display = "none";
+        };
+        request.send();
+      }
     </script>
   </head>
   <body>
