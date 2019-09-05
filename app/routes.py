@@ -1,6 +1,8 @@
 from flask import render_template
 from flask import request
 from app import app
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import RPi.GPIO as GPIO
 import time
 import sys
@@ -35,11 +37,18 @@ GPIO.output(LED_1_LEVEL, GPIO.LOW)
 #GPIO.output(LED_A_LEVEL, GPIO.HIGH)
 #GPIO.output(LED_1_LEVEL, GPIO.HIGH)
 
+limiter = Limiter(
+        app,
+        key_func=get_remote_address,
+        default_limits=["3 per hour", "3 per hour"],
+    )
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/activate', methods=['POST'])
+@limiter.limit("3 per hour")
 def activate():
     success = True
     if success:
