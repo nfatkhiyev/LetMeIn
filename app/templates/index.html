@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>CSH: Let me in!!!!</title>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
     <style>
       body {
         background-color: #152d54;
@@ -51,6 +52,20 @@
       }
     </style>
     <script>
+      function onLoad(){
+        var element1 = document.getElementByID('butt');
+        var elementA = document.getElementById('levelA');
+        element1.onclick = validate1;
+        elementA.onclick = validateA;
+      }
+      function validate1(event){
+        event.preventDefault();
+        grecaptcha.execute();
+      }
+      function validateA(event){
+        event.preventDefault();
+        grecaptcha.execute();
+      }
       function showElem(id) {
         document.getElementById(id).style.display = "initial";
       }
@@ -60,23 +75,28 @@
       function hideButtons() {
         hideElem("buttonContainer");
       }
+      function letInA(token){
+        letIn('aLevel')
+      }
+      function letIn1(token){
+        letIn('1Level')
+      }
       function letIn(level) {
         showElem("waitingStatus");
         hideButtons();
-        var request = new XMLHttpRequest();
-        request.open("GET","/activate?level="+level,true);
-        request.onreadystatechange = function () {
-          if (request.readyState !== 4) {
-            return;
-          }
-          hideElem("waitingStatus");
-          if (request.responseText == "timeout") {
-            showElem("timedOutStatus");
-          } else if (request.responseText == "buttonpressed") {
-            showElem("comingStatus");
-          }
-        };
-        request.send();
+        fetch(`/activate?level=${level}`, {method: 'POST'})
+          .then(resp => {
+            if (resp.ok) {
+                hideElem("waitingStatus");
+                return resp.text().then(text => {
+                    if (text === "timeout") {
+                        showElem("timedOutStatus");
+                    } else if (text === "buttonpressed") {
+                        showElem("comingStatus");
+                    }
+                });
+            }
+        })
       }
     </script>
   </head>
@@ -102,8 +122,13 @@
       <img src="https://media0.giphy.com/media/3oEjI80DSa1grNPTDq/giphy.gif" />
     </div>
     <div id="buttonContainer">
-      <button id="butt" onclick="letIn('1Level')">Let me in: Level 1!!!</button>
-      <button id="levelA" onclick="letIn('aLevel')">Let me in: Level A!!!</button>
+      <button id="butt" class="g-recaptcha"
+        data-sitekey="6LcxrbYUAAAAAL4BM_lgfQVX0H5t1HlsCI647-HO"
+        data-callback="letIn1">Let me in: Level 1!!!</button>
+      <button id="levelA" class="g-recaptcha"
+        data-sitekey="6LcxrbYUAAAAAL4BM_lgfQVX0H5t1HlsCI647-HO"
+        data-callback="letInA">Let me in: Level A!!!</button>
+      <script>onLoad()</script>
     </div>
   </body>
 </html>

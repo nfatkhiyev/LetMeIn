@@ -5,12 +5,20 @@ import RPi.GPIO as GPIO
 import time
 import sys
 import atexit
+import json
+import urllib
+from os import curdir,sep
+from urllib.parse import parse_qs
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 PENCIL_SHARPENER = 17
 RESPONSE_BUTTON = 19
 LED_A_LEVEL = 27
 LED_1_LEVEL = 22
 
+SITE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify'
+SITE_SECRET = '6LcxrbYUAAAAAHx4rq2s1QdURaSKD0Isis4Rc8e1'
+RECAPTCH_RESPONSE_PARAM = 'g-recaptcha-response'
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -31,39 +39,47 @@ GPIO.output(LED_1_LEVEL, GPIO.LOW)
 def index():
     return render_template('index.html')
 
-@app.route('/activate')
+@app.route('/activate', methods=['POST'])
 def activate():
-    level = request.args.get('level')
-    startTime = time.time()
+    success = True
+    if success:
+        level = request.args['level']
+        startTime = time.time()
 
-    print("Activating: " + level, file=sys.stderr)
+        print("Activating: " + level, file=sys.stderr)
 
-    GPIO.output(PENCIL_SHARPENER, GPIO.HIGH)
+        GPIO.output(PENCIL_SHARPENER, GPIO.HIGH)
 
-    if level == '1Level':
-        GPIO.output(LED_1_LEVEL, GPIO.HIGH)
-    elif level == 'aLevel':
-        GPIO.output(LED_A_LEVEL, GPIO.HIGH)
+        if level == '1Level':
+            GPIO.output(LED_1_LEVEL, GPIO.HIGH)
+        elif level == 'aLevel':
+            GPIO.output(LED_A_LEVEL, GPIO.HIGH)
 
-    while True:
+        while True:
 
-        elapsedTime = time.time() - startTime
-        timedOut = elapsedTime > 45
-        buttonPressed = GPIO.input(RESPONSE_BUTTON)
+            elapsedTime = time.time() - startTime
+            timedOut = elapsedTime > 45
+            buttonPressed = GPIO.input(RESPONSE_BUTTON)
 
-        if timedOut or buttonPressed:
+            if timedOut or buttonPressed:
 
-            GPIO.output(PENCIL_SHARPENER, GPIO.LOW)
-            GPIO.output(LED_1_LEVEL, GPIO.LOW)
-            GPIO.output(LED_A_LEVEL, GPIO.LOW)
+                GPIO.output(PENCIL_SHARPENER, GPIO.LOW)
+                GPIO.output(LED_1_LEVEL, GPIO.LOW)
+                GPIO.output(LED_A_LEVEL, GPIO.LOW)
 
-            if timedOut:
-                print("Button timed out", file=sys.stderr)
-                return "timeout"
-            elif buttonPressed:
-                print("Button pressed", file=sys.stderr)
-                return "buttonpressed"
-            return ""
+                if timedOut:
+                    print("Button timed out", file=sys.stderr)
+                    return "timeout"
+                elif buttonPressed:
+                    print("Button pressed", file=sys.stderr)
+                    return "buttonpressed"
+                return ""
+    else:
+        GPIO.output(PENCIL_SHARPENER, GPIO.LOW)
+        GPIO.output(LED_1_LEVEL, GPIO.LOW)
+        GPIO.output(LED_A_LEVEL, GPIO.LOW)
+        print("Not Verified", file=sys.stderr)
+        return "not verified"
 
 def shutdown():
     print("Goodbye", file=sys.stderr)
