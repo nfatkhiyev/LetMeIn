@@ -8,10 +8,9 @@ import time
 import sys
 import atexit
 import json
-import urllib
+from urllib.parse import urlencode
+from urllib.request import urlopen
 from os import curdir,sep
-from urllib.parse import parse_qs
-from http.server import BaseHTTPRequestHandler, HTTPServer
 
 PENCIL_SHARPENER = 17
 RESPONSE_BUTTON = 19
@@ -19,8 +18,7 @@ LED_A_LEVEL = 27
 LED_1_LEVEL = 22
 
 SITE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify'
-SITE_SECRET = '6LcxrbYUAAAAAHx4rq2s1QdURaSKD0Isis4Rc8e1'
-RECAPTCH_RESPONSE_PARAM = 'g-recaptcha-response'
+SECRET_KEY = '6LcxrbYUAAAAAHx4rq2s1QdURaSKD0Isis4Rc8e1'
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -40,7 +38,7 @@ GPIO.output(LED_1_LEVEL, GPIO.LOW)
 limiter = Limiter(
         app,
         key_func=get_remote_address,
-        default_limits=["3 per hour", "3 per hour"],
+        default_limits=["4 per hour", "4 per hour"],
     )
 
 @app.route('/')
@@ -48,11 +46,24 @@ def index():
     return render_template('index.html')
 
 @app.route('/activate', methods=['POST'])
-@limiter.limit("3 per hour")
+@limiter.limit("4 per hour")
 def activate():
-    success = True
+    body = request.json
+    RECAPTCHA_RESPONSE = body['response']
+
+    REMOTE_IP = request.remote_addr
+    params = urlencode({
+        'secret':SECRET_KEY,
+        'response':RECAPTCHA_RESPONSE,
+    })
+
+    data = urlopen(SITE_VERIFY_URL, params.encode('utf-8')).read()
+
+    result = json.loads(data)
+    success = result.get('success', None)
+
     if success:
-        level = request.args['level']
+        level = body['level']
         startTime = time.time()
 
         print("Activating: " + level, file=sys.stderr)

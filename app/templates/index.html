@@ -84,7 +84,18 @@
       function letIn(level) {
         showElem("waitingStatus");
         hideButtons();
-        fetch(`/activate?level=${level}`, {method: 'POST'})
+        var response = grecaptcha.getResponse();
+
+        console.log(response);
+
+        var params = {
+          level: level,
+          response: response
+        };
+
+        var json = JSON.stringify(params);
+
+        fetch(`/activate`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: json})
           .then(resp => {
             if (resp.ok) {
                 hideElem("waitingStatus");
