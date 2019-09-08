@@ -76,10 +76,22 @@
         hideElem("buttonContainer");
       }
       function letInA(token){
-        letIn('aLevel')
+        var name = prompt('Enter name to alert Slack')
+        if (name === ""){
+          letIn('aLevel');
+        }
+        else{
+          postSlack(name,'aLevel');
+        }
       }
       function letIn1(token){
-        letIn('1Level')
+        var name = prompt('Enter name to alert Slack')
+        if(name === ""){
+          letIn('1Level');
+        }
+        else{
+          postSlack(name,'1Level');
+        }
       }
       function letIn(level) {
         showElem("waitingStatus");
@@ -108,6 +120,21 @@
                 });
             }
         })
+      }
+      function postSlack(name, level){
+        if(level ==="aLevel"){
+          levelString = "Level A";
+        }
+        else if(level === "1Level"){
+          levelString = "Level 1"
+        }
+        var params = {
+          "text":`<!channel> ${name} wants to get in from ${levelString}`
+        }
+        fetch('https://hooks.slack.com/services/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',
+          {method: 'POST', body: JSON.stringify(params)})
+          .then(() => letIn(level))
+          .catch((error) => console.log(error));
       }
     </script>
   </head>
