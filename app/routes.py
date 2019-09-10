@@ -18,7 +18,7 @@ LED_A_LEVEL = 27
 LED_1_LEVEL = 22
 
 SITE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify'
-SECRET_KEY = '6LcxrbYUAAAAAHx4rq2s1QdURaSKD0Isis4Rc8e1'
+SECRET_KEY = '6XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
