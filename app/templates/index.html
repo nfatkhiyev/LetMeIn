@@ -129,7 +129,7 @@
           levelString = "Level 1"
         }
         var params = {
-          "text":`<!channel> ${name} wants to get in from ${levelString}`
+          "text":`<!here> ${name} wants to get in from ${levelString}`
         }
         fetch('https://hooks.slack.com/services/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',
           {method: 'POST', body: JSON.stringify(params)})
