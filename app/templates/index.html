@@ -76,20 +76,36 @@
         hideElem("buttonContainer");
       }
       function letInA(token){
-        var name = prompt('Enter name to alert Slack')
+        var name = null
+        try{
+          name = prompt('Enter name to alert Slack OR press OK to skip');
+        }catch(e){
+          console.warning(e);
+        }
         if (name === ""){
           letIn('aLevel');
         }
-        else{
+        else if(name == null){
+          alert('Your request has been canceled');
+        }
+        else if(name != "" && name != null){
           postSlack(name,'aLevel');
         }
       }
       function letIn1(token){
-        var name = prompt('Enter name to alert Slack')
+        var name = null
+        try{
+          name = prompt('Enter name to alert Slack OR press OK to skip');
+        }catch(e){
+          console.warning(e);
+        }
         if(name === ""){
           letIn('1Level');
         }
-        else{
+        else if(name == null){
+          alert('Your request has been canceled');
+        }
+        else if(name != "" && name != null){
           postSlack(name,'1Level');
         }
       }
@@ -97,8 +113,6 @@
         showElem("waitingStatus");
         hideButtons();
         var response = grecaptcha.getResponse();
-
-        console.log(response);
 
         var params = {
           level: level,
@@ -131,7 +145,7 @@
         var params = {
           "text":`<!here> ${name} wants to get in from ${levelString}`
         }
-        fetch('https://hooks.slack.com/services/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',
+        fetch('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
           {method: 'POST', body: JSON.stringify(params)})
           .then(() => letIn(level))
           .catch((error) => console.log(error));
