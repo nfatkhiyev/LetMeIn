@@ -55,14 +55,10 @@
       function onLoad(){
         var element1 = document.getElementById('butt');
         var elementA = document.getElementById('levelA');
-        element1.onclick = validate1;
-        elementA.onclick = validateA;
+        element1.onclick = validate;
+        elementA.onclick = validate;
       }
       function validate1(event){
-        event.preventDefault();
-        grecaptcha.execute();
-      }
-      function validateA(event){
         event.preventDefault();
         grecaptcha.execute();
       }
