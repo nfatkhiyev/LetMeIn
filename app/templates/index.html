@@ -22,13 +22,15 @@
       #waitingStatus,
       #comingStatus,
       #timedOutStatus,
-      #buttonContainer {
+      #buttonContainer,
+      #ligmaStatus{
         margin: auto;
       }
 
       #waitingStatus,
       #comingStatus,
-      #timedOutStatus {
+      #timedOutStatus,
+      #ligmaStatus{
         display: none;
       }
 
@@ -55,14 +57,10 @@
       function onLoad(){
         var element1 = document.getElementById('butt');
         var elementA = document.getElementById('levelA');
-        element1.onclick = validate1;
-        elementA.onclick = validateA;
+        element1.onclick = validate;
+        elementA.onclick = validate;
       }
-      function validate1(event){
-        event.preventDefault();
-        grecaptcha.execute();
-      }
-      function validateA(event){
+      function validate(event){
         event.preventDefault();
         grecaptcha.execute();
       }
@@ -75,37 +73,68 @@
       function hideButtons() {
         hideElem("buttonContainer");
       }
-      function letInA(token){
-        var name = null
+      function processName(inputName){
+        var name = null;
+        var processedName = null;
+        var numberCheck = /[0-9]/g;
+        var gmaCheck = /gma/g;
         try{
-          name = prompt('Enter name to alert Slack OR press OK to skip');
+          name = inputName;
+          processedName = name.trim().toLowerCase();
         }catch(e){
           console.warning(e);
         }
-        if (name === ""){
+        if (numberCheck.test(processedName) || gmaCheck.test(processedName)){
+          name = "false";
+          return name;
+        }
+        else {
+          return name;
+        }
+      }
+      function letInA(token){
+        var name = null;
+        var checkedName = null;
+        try{
+          name = prompt('Enter name to alert Slack OR press OK to skip');
+          checkedName = processName(name);
+        }catch(e){
+          console.warning(e);
+        }
+        if (checkedName === ""){
           letIn('aLevel');
         }
-        else if(name == null){
+        else if(checkedName == null){
           alert('Your request has been canceled');
         }
-        else if(name != "" && name != null){
+        else if(checkedName === "false"){
+          hideButtons();
+          showElem("ligmaStatus");
+        }
+        else if(checkedName != "" && checkedName != null){
           postSlack(name,'aLevel');
         }
       }
       function letIn1(token){
-        var name = null
+        var name = null;
+        var checkedName = null;
         try{
           name = prompt('Enter name to alert Slack OR press OK to skip');
+          checkedName = processName(name);
         }catch(e){
           console.warning(e);
         }
-        if(name === ""){
+        if(checkedName === ""){
           letIn('1Level');
         }
-        else if(name == null){
+        else if(checkedName == null){
           alert('Your request has been canceled');
         }
-        else if(name != "" && name != null){
+        else if(checkedName === "false"){
+          hideButtons();
+          showElem("ligmaStatus");
+        }
+        else if(checkedName != "" && checkedName != null){
           postSlack(name,'1Level');
         }
       }
@@ -145,7 +174,7 @@
         var params = {
           "text":`<!here> ${name} wants to get in from ${levelString}`
         }
-        fetch('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+        fetch('https://hooks.slack.com/services/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',
           {method: 'POST', body: JSON.stringify(params)})
           .then(() => letIn(level))
           .catch((error) => console.log(error));
@@ -172,6 +201,12 @@
         Thank you, or, I'm sorry.
       </p>
       <img src="https://media0.giphy.com/media/3oEjI80DSa1grNPTDq/giphy.gif" />
+    </div>
+    <div id="ligmaStatus">
+      <p>
+      What is Ligma?
+      </p>
+      <img src="https://media.giphy.com/media/12gTXYTS09oST6/giphy.gif" />
     </div>
     <div id="buttonContainer">
       <button id="butt" class="g-recaptcha"
