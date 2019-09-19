@@ -1,3 +1,4 @@
+from app import config
 from flask import render_template
 from flask import request
 from app import app
@@ -17,8 +18,8 @@ RESPONSE_BUTTON = 19
 LED_A_LEVEL = 27
 LED_1_LEVEL = 22
 
-SITE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify'
-SECRET_KEY = '6XXXXXXXXXXX'
+SITE_VERIFY_URL = config.RECAPTCHA_SITE_VERIFY_URL
+SECRET_KEY = config.RECAPTCHA_SECRET_KEY
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)

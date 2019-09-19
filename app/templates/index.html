@@ -2,7 +2,6 @@
 <html>
   <head>
     <title>CSH: Let me in!!!!</title>
-    <script src='https://www.google.com/recaptcha/api.js'></script>
     <style>
       body {
         background-color: #152d54;
@@ -22,13 +21,15 @@
       #waitingStatus,
       #comingStatus,
       #timedOutStatus,
-      #buttonContainer {
+      #buttonContainer,
+      #ligmaStatus{
         margin: auto;
       }
 
       #waitingStatus,
       #comingStatus,
-      #timedOutStatus {
+      #timedOutStatus,
+      #ligmaStatus{
         display: none;
       }
 
@@ -52,13 +53,16 @@
       }
     </style>
     <script>
-      function onLoad(){
-        var element1 = document.getElementById('butt');
-        var elementA = document.getElementById('levelA');
-        element1.onclick = validate;
-        elementA.onclick = validate;
+
+      var buttID;
+      var levelAID;
+      var onloadCallback = function() {
+        buttID = grecaptcha.render('butt',{'sitekey' : 'XXXXXXXXXX',
+          'callback' : letIn1});
+        levelAID = grecaptcha.render('levelA',{'sitekey' : 'XXXXXXXXXX',
+          'callback' : letInA});
       }
-      function validate1(event){
+      function validate(event){
         event.preventDefault();
         grecaptcha.execute();
       }
@@ -71,44 +75,83 @@
       function hideButtons() {
         hideElem("buttonContainer");
       }
+      function processName(inputName){
+        var name = null;
+        var processedName = null;
+        var numberCheck = /[0-9]/g;
+        var gmaCheck = /gma/g;
+        try{
+          name = inputName;
+          processedName = name.trim().toLowerCase();
+        }catch(e){
+          //console.warning(e);
+        }
+        if (numberCheck.test(processedName) || gmaCheck.test(processedName)){
+          name = "false";
+          return name;
+        }
+        else {
+          return name;
+        }
+      }
       function letInA(token){
-        var name = null
+        var name = null;
+        var checkedName = null;
         try{
           name = prompt('Enter name to alert Slack OR press OK to skip');
+          checkedName = processName(name);
         }catch(e){
           console.warning(e);
         }
-        if (name === ""){
+        if (checkedName === ""){
           letIn('aLevel');
         }
-        else if(name == null){
+        else if(checkedName == null){
           alert('Your request has been canceled');
         }
-        else if(name != "" && name != null){
+        else if(checkedName === "false"){
+          hideButtons();
+          showElem("ligmaStatus");
+        }
+        else if(checkedName != "" && checkedName != null){
           postSlack(name,'aLevel');
         }
       }
       function letIn1(token){
-        var name = null
+        var name = null;
+        var checkedName = null;
         try{
           name = prompt('Enter name to alert Slack OR press OK to skip');
+          checkedName = processName(name);
         }catch(e){
           console.warning(e);
         }
-        if(name === ""){
+        if(checkedName === ""){
           letIn('1Level');
         }
-        else if(name == null){
+        else if(checkedName == null){
           alert('Your request has been canceled');
         }
-        else if(name != "" && name != null){
+        else if(checkedName === "false"){
+          hideButtons();
+          showElem("ligmaStatus");
+        }
+        else if(checkedName != "" && checkedName != null){
           postSlack(name,'1Level');
         }
       }
       function letIn(level) {
         showElem("waitingStatus");
         hideButtons();
-        var response = grecaptcha.getResponse();
+        var response;
+        var responseButt = grecaptcha.getResponse(buttID);
+        var responseLevelA = grecaptcha.getResponse(levelAID);
+        if(responseButt == null || responseButt === ""){
+          response = responseLevelA;
+        }
+        else {
+          response = responseButt;
+        }
 
         var params = {
           level: level,
@@ -141,12 +184,13 @@
         var params = {
           "text":`<!here> ${name} wants to get in from ${levelString}`
         }
-        fetch('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+        fetch('XXXXXXXXXXXXXXXXXXXXXXX',
           {method: 'POST', body: JSON.stringify(params)})
           .then(() => letIn(level))
           .catch((error) => console.log(error));
       }
     </script>
+    <script src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit'></script>
   </head>
   <body>
     <div id="waitingStatus">
@@ -169,14 +213,15 @@
       </p>
       <img src="https://media0.giphy.com/media/3oEjI80DSa1grNPTDq/giphy.gif" />
     </div>
+    <div id="ligmaStatus">
+      <p>
+      What is Ligma?
+      </p>
+      <img src="https://media.giphy.com/media/12gTXYTS09oST6/giphy.gif" />
+    </div>
     <div id="buttonContainer">
-      <button id="butt" class="g-recaptcha"
-        data-sitekey="6LcxrbYUAAAAAL4BM_lgfQVX0H5t1HlsCI647-HO"
-        data-callback="letIn1">Let me in: Level 1!!!</button>
-      <button id="levelA" class="g-recaptcha"
-        data-sitekey="6LcxrbYUAAAAAL4BM_lgfQVX0H5t1HlsCI647-HO"
-        data-callback="letInA">Let me in: Level A!!!</button>
-      <script>onLoad()</script>
+      <button id="butt">Let me in: Level 1!!!</button>
+      <button id="levelA">Let me in: Level A!!!</button>
     </div>
   </body>
 </html>

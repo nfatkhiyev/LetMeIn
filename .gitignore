@@ -2,5 +2,6 @@ venv/
 .idea
 app/templates/__pycache__
 app/__pycache__/*
+app/config.py
 *.swp
 *.swo
