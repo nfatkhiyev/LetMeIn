@@ -50,15 +50,16 @@
         margin: 5rem 0;
         cursor: pointer;
         width: 100%;
+        border-radius: 10px;
       }
     </style>
     <script>
       var buttID;
       var levelAID;
       var onloadCallback = function() {
-        buttID = grecaptcha.render('butt',{'sitekey' : 'XXXXXXXXXX',
+        buttID = grecaptcha.render('butt',{'sitekey' : '6LeFOrkUAAAAAK4ewdAH9kBpsjFgvviwY6nNUWI3',
           'callback' : letIn1});
-        levelAID = grecaptcha.render('levelA',{'sitekey' : 'XXXXXXXXXX',
+        levelAID = grecaptcha.render('levelA',{'sitekey' : '6LeFOrkUAAAAAK4ewdAH9kBpsjFgvviwY6nNUWI3',
           'callback' : letInA});
       }
       function validate(event){
@@ -81,11 +82,11 @@
         var gmaCheck = /gma/g;
         try{
           name = inputName;
-          processedName = name.trim().toLowerCase();
+          processedName = name.trim().toLowerCase().replace(/\s/g,'');
         }catch(e){
           //console.warning(e);
         }
-        if (numberCheck.test(processedName) || gmaCheck.test(processedName)){
+        if (numberCheck.test(processedName) || gmaCheck.test(processedName) || processedName == "test"){
           name = "false";
           return name;
         }
@@ -183,7 +184,7 @@
         var params = {
           "text":`<!here> ${name} wants to get in from ${levelString}`
         }
-        fetch('XXXXXXXXXXXXXXXXXXXXXXX',
+        fetch('https://hooks.slack.com/services/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',
           {method: 'POST', body: JSON.stringify(params)})
           .then(() => letIn(level))
           .catch((error) => console.log(error));
