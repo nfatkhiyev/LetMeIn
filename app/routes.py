@@ -14,9 +14,11 @@ from urllib.request import urlopen
 from os import curdir,sep
 
 PENCIL_SHARPENER = 17
-RESPONSE_BUTTON = 19
-LED_A_LEVEL = 27
-LED_1_LEVEL = 22
+RESPONSE_BUTTON = 5
+LED_A_LEVEL = 6
+LED_1_LEVEL = 13
+LED_N_LEVEL = 19
+LED_S_LEVEL = 26
 
 SITE_VERIFY_URL = config.RECAPTCHA_SITE_VERIFY_URL
 SECRET_KEY = config.RECAPTCHA_SECRET_KEY
@@ -27,10 +29,14 @@ GPIO.setup(PENCIL_SHARPENER, GPIO.OUT)
 GPIO.setup(RESPONSE_BUTTON, GPIO.IN,  pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(LED_A_LEVEL, GPIO.OUT)
 GPIO.setup(LED_1_LEVEL, GPIO.OUT)
+GPIO.setup(LED_N_LEVEL, GPIO.OUT)
+GPIO.setup(LED_S_LEVEL, GPIO.OUT)
 
 GPIO.output(PENCIL_SHARPENER, GPIO.LOW)
 GPIO.output(LED_A_LEVEL, GPIO.LOW)
 GPIO.output(LED_1_LEVEL, GPIO.LOW)
+GPIO.output(LED_N_LEVEL, GPIO.LOW)
+GPIO.output(LED_S_LEVEL, GPIO.LOW)
 
 #GPIO.output(PENCIL_SHARPENER, GPIO.HIGH)
 #GPIO.output(LED_A_LEVEL, GPIO.HIGH)
@@ -75,6 +81,10 @@ def activate():
             GPIO.output(LED_1_LEVEL, GPIO.HIGH)
         elif level == 'aLevel':
             GPIO.output(LED_A_LEVEL, GPIO.HIGH)
+        elif level == 'nLevel':
+            GPIO.output(LED_N_LEVEL, GPIO.HIGH)
+        elif level == 'sLevel':
+            GPIO.output(LED_S_LEVEL, GPIO.HIGH)
 
         while True:
 

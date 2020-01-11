@@ -51,15 +51,30 @@
         cursor: pointer;
         width: 100%;
         border-radius: 10px;
+        box-shadow: 0 0 5px 3px rgba(0,0,0,0.35);
+        position: relative;
+        top: 0px;
+        transition: box-shadow .1s ease-in, top .1s ease-in;
+      }
+
+      button:hover {
+          box-shadow: 0 0 5px 6px rgba(0,0,0,0.35);
+          top: -3px;
       }
     </style>
     <script>
       var buttID;
       var levelAID;
+      var levelNID;
+      var levelSID;
       var onloadCallback = function() {
         buttID = grecaptcha.render('butt',{'sitekey' : '6LeFOrkUAAAAAK4ewdAH9kBpsjFgvviwY6nNUWI3',
           'callback' : letIn1});
         levelAID = grecaptcha.render('levelA',{'sitekey' : '6LeFOrkUAAAAAK4ewdAH9kBpsjFgvviwY6nNUWI3',
+          'callback' : letInA});
+        levelNID = grecaptcha.render('levelA',{'sitekey' : '6LeFOrkUAAAAAK4ewdAH9kBpsjFgvviwY6nNUWI3',
+          'callback' : letInA});
+        levelSID = grecaptcha.render('levelA',{'sitekey' : '6LeFOrkUAAAAAK4ewdAH9kBpsjFgvviwY6nNUWI3',
           'callback' : letInA});
       }
       function validate(event){
@@ -222,6 +237,8 @@
     <div id="buttonContainer">
       <button id="butt">Let me in: Level 1!!!</button>
       <button id="levelA">Let me in: Level A!!!</button>
+      <button id="levelN">Let me in: N. Stairwell!!!</button>
+      <button id="levelS">Let me in: S. Stairwell!!!</button>
     </div>
   </body>
 </html>
