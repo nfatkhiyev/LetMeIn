@@ -9,6 +9,7 @@ import time
 import sys
 import atexit
 import json
+import requests
 from urllib.parse import urlencode
 from urllib.request import urlopen
 from os import curdir,sep
@@ -22,6 +23,7 @@ LED_S_LEVEL = 26
 
 SITE_VERIFY_URL = config.RECAPTCHA_SITE_VERIFY_URL
 SECRET_KEY = config.RECAPTCHA_SECRET_KEY
+SLACK_URL = config.SLACK_URL
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -111,6 +113,17 @@ def activate():
         GPIO.output(LED_A_LEVEL, GPIO.LOW)
         print("Not Verified", file=sys.stderr)
         return "not verified"
+
+@app.route('/notify', methods=['POST'])
+@limiter.limit("4 per hour")
+def notify_slack():
+    body = request.json
+    text = body['text']
+    params = {
+        'text': text,
+    }
+    r = requests.post(url=SLACK_URL, json = params)
+    return "notification posted"
 
 def shutdown():
     print("Goodbye", file=sys.stderr)
