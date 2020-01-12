@@ -2,7 +2,7 @@ var buttID;
 var levelAID;
 var levelNID;
 var levelSID;
-var onloadCallback = function() {
+var onloadCallback = function () {
     buttID = grecaptcha.render('butt', {
         'sitekey': '6LeFOrkUAAAAAK4ewdAH9kBpsjFgvviwY6nNUWI3',
         'callback': letIn1
@@ -11,11 +11,11 @@ var onloadCallback = function() {
         'sitekey': '6LeFOrkUAAAAAK4ewdAH9kBpsjFgvviwY6nNUWI3',
         'callback': letInA
     });
-    levelNID = grecaptcha.render('levelA', {
+    levelNID = grecaptcha.render('levelN', {
         'sitekey': '6LeFOrkUAAAAAK4ewdAH9kBpsjFgvviwY6nNUWI3',
         'callback': letInN
     });
-    levelSID = grecaptcha.render('levelA', {
+    levelSID = grecaptcha.render('levelS', {
         'sitekey': '6LeFOrkUAAAAAK4ewdAH9kBpsjFgvviwY6nNUWI3',
         'callback': letInS
     });
@@ -100,9 +100,18 @@ function letIn(level) {
     var response;
     var responseButt = grecaptcha.getResponse(buttID);
     var responseLevelA = grecaptcha.getResponse(levelAID);
-    if (responseButt == null || responseButt === "") {
+    var responseLevelN = grecaptcha.getResponse(levelNID);
+    var responseLevelS = grecaptcha.getResponse(levelSID);
+    if (responseButt == "" && responseLevelN == "" && responseLevelS == "") {
         response = responseLevelA;
-    } else {
+    }
+    else if (responseButt == "" && responseLevelA == "" && responseLevelS == "") {
+        response = responseLevelN;
+    }
+    else if (responseButt == "" && responseLevelA == "" && responseLevelN == "") {
+        response = responseLevelS;
+    }
+    else {
         response = responseButt;
     }
 
@@ -114,12 +123,12 @@ function letIn(level) {
     var json = JSON.stringify(params);
 
     fetch(`/activate`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: json
-        })
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: json
+    })
         .then(resp => {
             if (resp.ok) {
                 hideElem("waitingStatus");
@@ -148,9 +157,10 @@ function postSlack(name, level) {
         "text": `<!here> ${name} wants to get in from ${levelString}`
     }
     fetch('/notify', {
-            method: 'POST',
-            body: JSON.stringify(params)
-        })
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+        body: JSON.stringify(params)
+    })
         .then(() => letIn(level))
         .catch((error) => console.log(error));
 }

@@ -47,7 +47,7 @@ GPIO.output(LED_S_LEVEL, GPIO.LOW)
 limiter = Limiter(
         app,
         key_func=get_remote_address,
-        default_limits=["4 per hour", "4 per hour"],
+        default_limits=["104 per hour", "104 per hour"],
     )
 
 @app.route('/')
@@ -55,7 +55,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/activate', methods=['POST'])
-@limiter.limit("4 per hour")
+@limiter.limit("104 per hour")
 def activate():
     body = request.json
     RECAPTCHA_RESPONSE = body['response']
@@ -99,6 +99,8 @@ def activate():
                 GPIO.output(PENCIL_SHARPENER, GPIO.LOW)
                 GPIO.output(LED_1_LEVEL, GPIO.LOW)
                 GPIO.output(LED_A_LEVEL, GPIO.LOW)
+                GPIO.output(LED_N_LEVEL, GPIO.LOW)
+                GPIO.output(LED_S_LEVEL, GPIO.LOW)
 
                 if timedOut:
                     print("Button timed out", file=sys.stderr)
@@ -111,11 +113,14 @@ def activate():
         GPIO.output(PENCIL_SHARPENER, GPIO.LOW)
         GPIO.output(LED_1_LEVEL, GPIO.LOW)
         GPIO.output(LED_A_LEVEL, GPIO.LOW)
+        GPIO.output(LED_N_LEVEL, GPIO.LOW)
+        GPIO.output(LED_S_LEVEL, GPIO.LOW)
+
         print("Not Verified", file=sys.stderr)
         return "not verified"
 
 @app.route('/notify', methods=['POST'])
-@limiter.limit("4 per hour")
+@limiter.limit("104 per hour")
 def notify_slack():
     body = request.json
     text = body['text']
@@ -130,5 +135,8 @@ def shutdown():
     GPIO.output(PENCIL_SHARPENER, GPIO.LOW)
     GPIO.output(LED_A_LEVEL, GPIO.LOW)
     GPIO.output(LED_1_LEVEL, GPIO.LOW)
+    GPIO.output(LED_N_LEVEL, GPIO.LOW)
+    GPIO.output(LED_S_LEVEL, GPIO.LOW)
+
 
 atexit.register(shutdown)
