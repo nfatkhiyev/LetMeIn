@@ -1,228 +1,45 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <title>CSH: Let me in!!!!</title>
-    <style>
-      body {
-        background-color: #152d54;
-        display: flex;
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-      }
-
-      p {
-        font-size: 4rem;
-        color: white;
-      }
-
-      #waitingStatus,
-      #comingStatus,
-      #timedOutStatus,
-      #buttonContainer,
-      #ligmaStatus{
-        margin: auto;
-      }
-
-      #waitingStatus,
-      #comingStatus,
-      #timedOutStatus,
-      #ligmaStatus{
-        display: none;
-      }
-
-      img {
-        display: block;
-        width: 100%;
-      }
-
-      button {
-        background-color: #635192;
-        border: none;
-        color: white;
-        padding: 15px 32px;
-        text-align: center;
-        text-decoration: none;
-        display: block;
-        font-size: 5rem;
-        margin: 5rem 0;
-        cursor: pointer;
-        width: 100%;
-      }
-    </style>
-    <script>
-
-      var buttID;
-      var levelAID;
-      var onloadCallback = function() {
-        buttID = grecaptcha.render('butt',{'sitekey' : 'XXXXXXXXXX',
-          'callback' : letIn1});
-        levelAID = grecaptcha.render('levelA',{'sitekey' : 'XXXXXXXXXX',
-          'callback' : letInA});
-      }
-      function validate(event){
-        event.preventDefault();
-        grecaptcha.execute();
-      }
-      function showElem(id) {
-        document.getElementById(id).style.display = "initial";
-      }
-      function hideElem(id) {
-        document.getElementById(id).style.display = "none";
-      }
-      function hideButtons() {
-        hideElem("buttonContainer");
-      }
-      function processName(inputName){
-        var name = null;
-        var processedName = null;
-        var numberCheck = /[0-9]/g;
-        var gmaCheck = /gma/g;
-        try{
-          name = inputName;
-          processedName = name.trim().toLowerCase();
-        }catch(e){
-          //console.warning(e);
-        }
-        if (numberCheck.test(processedName) || gmaCheck.test(processedName)){
-          name = "false";
-          return name;
-        }
-        else {
-          return name;
-        }
-      }
-      function letInA(token){
-        var name = null;
-        var checkedName = null;
-        try{
-          name = prompt('Enter name to alert Slack OR press OK to skip');
-          checkedName = processName(name);
-        }catch(e){
-          console.warning(e);
-        }
-        if (checkedName === ""){
-          letIn('aLevel');
-        }
-        else if(checkedName == null){
-          alert('Your request has been canceled');
-        }
-        else if(checkedName === "false"){
-          hideButtons();
-          showElem("ligmaStatus");
-        }
-        else if(checkedName != "" && checkedName != null){
-          postSlack(name,'aLevel');
-        }
-      }
-      function letIn1(token){
-        var name = null;
-        var checkedName = null;
-        try{
-          name = prompt('Enter name to alert Slack OR press OK to skip');
-          checkedName = processName(name);
-        }catch(e){
-          console.warning(e);
-        }
-        if(checkedName === ""){
-          letIn('1Level');
-        }
-        else if(checkedName == null){
-          alert('Your request has been canceled');
-        }
-        else if(checkedName === "false"){
-          hideButtons();
-          showElem("ligmaStatus");
-        }
-        else if(checkedName != "" && checkedName != null){
-          postSlack(name,'1Level');
-        }
-      }
-      function letIn(level) {
-        showElem("waitingStatus");
-        hideButtons();
-        var response;
-        var responseButt = grecaptcha.getResponse(buttID);
-        var responseLevelA = grecaptcha.getResponse(levelAID);
-        if(responseButt == null || responseButt === ""){
-          response = responseLevelA;
-        }
-        else {
-          response = responseButt;
-        }
-
-        var params = {
-          level: level,
-          response: response
-        };
-
-        var json = JSON.stringify(params);
-
-        fetch(`/activate`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: json})
-          .then(resp => {
-            if (resp.ok) {
-                hideElem("waitingStatus");
-                return resp.text().then(text => {
-                    if (text === "timeout") {
-                        showElem("timedOutStatus");
-                    } else if (text === "buttonpressed") {
-                        showElem("comingStatus");
-                    }
-                });
-            }
-        })
-      }
-      function postSlack(name, level){
-        if(level ==="aLevel"){
-          levelString = "Level A";
-        }
-        else if(level === "1Level"){
-          levelString = "Level 1"
-        }
-        var params = {
-          "text":`<!here> ${name} wants to get in from ${levelString}`
-        }
-        fetch('XXXXXXXXXXXXXXXXXXXXXXX',
-          {method: 'POST', body: JSON.stringify(params)})
-          .then(() => letIn(level))
-          .catch((error) => console.log(error));
-      }
-    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='LetMeIn.js') }}"></script>
     <script src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit'></script>
-  </head>
-  <body>
+</head>
+
+<body>
     <div id="waitingStatus">
-      <p>
-        Notifying User Center...
-      </p>
-      <img src="https://media0.giphy.com/media/yx400dIdkwWdsCgWYp/giphy.gif"/>
+        <p>
+            Notifying User Center...
+        </p>
+        <img src="https://media0.giphy.com/media/yx400dIdkwWdsCgWYp/giphy.gif" />
     </div>
     <div id="comingStatus">
-      <p>
-        Someone is coming to let you in!
-      </p>
-      <img src="https://media0.giphy.com/media/Sti3xU9WslS95nIoox/giphy.gif" />
+        <p>
+            Someone is coming to let you in!
+        </p>
+        <img src="https://media0.giphy.com/media/Sti3xU9WslS95nIoox/giphy.gif" />
     </div>
     <div id="timedOutStatus">
-      <p>
-        Nobody responded to the request.<br />
-        <br />
-        Thank you, or, I'm sorry.
-      </p>
-      <img src="https://media0.giphy.com/media/3oEjI80DSa1grNPTDq/giphy.gif" />
+        <p>
+            Nobody responded to the request.<br />
+            <br /> Thank you, or, I'm sorry.
+        </p>
+        <img src="https://media0.giphy.com/media/3oEjI80DSa1grNPTDq/giphy.gif" />
     </div>
     <div id="ligmaStatus">
-      <p>
-      What is Ligma?
-      </p>
-      <img src="https://media.giphy.com/media/12gTXYTS09oST6/giphy.gif" />
+        <p>
+            What is Ligma?
+        </p>
+        <img src="https://media.giphy.com/media/12gTXYTS09oST6/giphy.gif" />
     </div>
     <div id="buttonContainer">
-      <button id="butt">Let me in: Level 1!!!</button>
-      <button id="levelA">Let me in: Level A!!!</button>
+        <button id="butt">Let me in: Level 1!!!</button>
+        <button id="levelA">Let me in: Level A!!!</button>
+        <button id="levelN">Let me in: N. Stairwell!!!</button>
+        <button id="levelS">Let me in: S. Stairwell!!!</button>
     </div>
-  </body>
-</html>
+</body>
 
+</html>
