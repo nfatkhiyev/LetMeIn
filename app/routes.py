@@ -2,8 +2,6 @@ from app import config
 from flask import render_template
 from flask import request
 from app import app
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 import RPi.GPIO as GPIO
 import time
 import sys
@@ -44,18 +42,11 @@ GPIO.output(LED_S_LEVEL, GPIO.LOW)
 #GPIO.output(LED_A_LEVEL, GPIO.HIGH)
 #GPIO.output(LED_1_LEVEL, GPIO.HIGH)
 
-limiter = Limiter(
-        app,
-        key_func=get_remote_address,
-        default_limits=["104 per hour", "104 per hour"],
-    )
-
 @app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/activate', methods=['POST'])
-@limiter.limit("104 per hour")
 def activate():
     body = request.json
     RECAPTCHA_RESPONSE = body['response']
@@ -120,7 +111,6 @@ def activate():
         return "not verified"
 
 @app.route('/notify', methods=['POST'])
-@limiter.limit("104 per hour")
 def notify_slack():
     body = request.json
     text = body['text']
