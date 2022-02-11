@@ -154,7 +154,7 @@ function postSlack(name, level) {
         levelString = "South Side Stairwell"
     }
     var params = {
-        "text": `<!here> ${name} wants to get in from ${levelString}`
+        "text": `<!subteam^SCL50LELQ> ${name} wants to get in from ${levelString}`
     }
     fetch('/notify', {
         headers: { 'Content-Type': 'application/json' },

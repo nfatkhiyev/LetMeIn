@@ -11,6 +11,8 @@ import requests
 from urllib.parse import urlencode
 from urllib.request import urlopen
 from os import curdir,sep
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
 PENCIL_SHARPENER = 17
 RESPONSE_BUTTON = 5
@@ -21,7 +23,7 @@ LED_S_LEVEL = 26
 
 SITE_VERIFY_URL = config.RECAPTCHA_SITE_VERIFY_URL
 SECRET_KEY = config.RECAPTCHA_SECRET_KEY
-SLACK_URL = config.SLACK_URL
+SLACK = WebClient(config.SLACK_KEY)
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -114,10 +116,7 @@ def activate():
 def notify_slack():
     body = request.json
     text = body['text']
-    params = {
-        'text': text,
-    }
-    r = requests.post(url=SLACK_URL, json = params)
+    WebClient.chat_postMessage(channel = "CCN6USBTQ", text=text)
     return "notification posted"
 
 def shutdown():
@@ -130,3 +129,4 @@ def shutdown():
 
 
 atexit.register(shutdown)
+
